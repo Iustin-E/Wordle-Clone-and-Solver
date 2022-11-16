@@ -1,11 +1,10 @@
 import random
 
-autosolve = False
+autosolve = True
 #       Deschiderea si creerea listei
 file = open('cuvinte', 'r')
 cuvinte_data = file.read().replace('\n', ' ').split(' ')
 file.close()
-
 file = open('cuvinte', 'r')
 cuvinte_ramase = file.read().replace('\n', ' ').split(' ')
 file.close()
@@ -13,31 +12,42 @@ file.close()
 
 #       Alegerea unui cuvant random
 cuvant_corect = random.choice(cuvinte_data)
-#cuvant_corect = 'LENTE'
-#print(cuvant_corect)
+#cuvant_corect = 'GALON'
+print(cuvant_corect)
 
 def solve(last_guess, last_feedback):
     global cuvinte_ramase
     for i in range(5):
         j = 0
         n = len(cuvinte_ramase) - 1
+        # TODO - fiecare cuvant din cuvinte_ramase - verifica daca trebuie eliminat cu o functie
+        #       si pune cuvintele intr un vector nou
         while j < n:
             if last_feedback[i] == 'G':
                 if cuvinte_ramase[j][i] != last_guess[i]:
                     cuvinte_ramase.remove(cuvinte_ramase[j])
                     j -= 1
 
+            # TODO - guess: dracu - cu Y la 'c' - nu scoate toate cuvintele care NU au 'c'
             elif last_feedback[i] == 'Y':
                 if last_guess[i] not in cuvinte_ramase[j]:
                     cuvinte_ramase.remove(cuvinte_ramase[j])
-
-            elif last_feedback[i] == '_':
+                    j-=1
                 if last_guess[i] == cuvinte_ramase[j][i]:
+                    print("compar ", last_guess, cuvinte_ramase[j])
                     cuvinte_ramase.remove(cuvinte_ramase[j])
+                    j-=1
+            elif last_feedback[i] == '_':
+                # TODO - cand litera este o singura data in cuvant si pui un cuvant care are 2,
+                #  elimina cuvantul bun ptc crede ca litera nu exista deloc in cuvant
+                #  ( cu in in loc de == mai jos)
+                if last_guess[i] == cuvinte_ramase[j]:
+                    cuvinte_ramase.remove(cuvinte_ramase[j])
+                    j -= 1
 
             j += 1
             n = len(cuvinte_ramase)
-        print(len(cuvinte_ramase), cuvinte_ramase)
+    print(len(cuvinte_ramase), cuvinte_ramase)
 
 def incorect(guess):
     #       Dictionar cu aparitia fiecarei litere - pentru litere care apar de mai multe ori
